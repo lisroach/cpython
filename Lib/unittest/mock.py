@@ -45,11 +45,13 @@ FILTER_DIR = True
 # Without this, the __class__ properties wouldn't be set correctly
 _safe_super = super
 
+
 def _is_async_obj(obj):
-    if getattr(obj, '__code__', None):
-        return asyncio.iscoroutinefunction(obj) or inspect.isawaitable(obj)
-    else:
+    sync_mocks = [MagicMock, Mock, PropertyMock, NonCallableMock, NonCallableMagicMock]
+    if (any(isinstance(obj, sync_mock) for sync_mock in sync_mocks)
+            and not isinstance(obj, AsyncMock)):
         return False
+    return asyncio.iscoroutinefunction(obj) or inspect.isawaitable(obj)
 
 
 def _is_async_func(func):

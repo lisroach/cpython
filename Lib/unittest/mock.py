@@ -47,9 +47,7 @@ _safe_super = super
 
 
 def _is_async_obj(obj):
-    sync_mocks = [MagicMock, Mock, PropertyMock, NonCallableMock, NonCallableMagicMock]
-    if (any(isinstance(obj, sync_mock) for sync_mock in sync_mocks)
-            and not isinstance(obj, AsyncMock)):
+    if _is_instance_mock(obj) and not isinstance(obj, AsyncMock):
         return False
     return asyncio.iscoroutinefunction(obj) or inspect.isawaitable(obj)
 

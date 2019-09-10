@@ -18,6 +18,10 @@ class AsyncClass:
     def normal_method(self):
         pass
 
+class AwaitableClass:
+    def __await__(self):
+        yield
+
 async def async_func():
     pass
 
@@ -159,6 +163,10 @@ class AsyncAutospecTest(unittest.TestCase):
     def test_create_autospec_instance(self):
         with self.assertRaises(RuntimeError):
             create_autospec(async_func, instance=True)
+
+    def test_create_autospec_awaitable_class(self):
+        awaitable_mock = create_autospec(spec=AwaitableClass())
+        self.assertIsInstance(create_autospec(awaitable_mock), AsyncMock)
 
     def test_create_autospec(self):
         spec = create_autospec(async_func_args)

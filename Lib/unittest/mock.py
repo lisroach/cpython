@@ -415,7 +415,7 @@ class NonCallableMock(Base):
                 if _is_async_obj(bound_args[spec_arg[0]]):
                     bases = (AsyncMockMixin, cls,)
         new = type(cls.__name__, bases, {'__doc__': cls.__doc__})
-        instance = object.__new__(new)
+        instance = _safe_super(NonCallableMock, cls).__new__(new)
         return instance
 
 
@@ -1988,7 +1988,7 @@ def _set_return_value(mock, method, name):
 
 
 
-class MagicMixin(object):
+class MagicMixin(Base):
     def __init__(self, /, *args, **kw):
         self._mock_set_magics()  # make magic work for kwargs in init
         _safe_super(MagicMixin, self).__init__(*args, **kw)
@@ -2030,7 +2030,7 @@ class NonCallableMagicMock(MagicMixin, NonCallableMock):
         self._mock_set_magics()
 
 
-class AsyncMagicMixin:
+class AsyncMagicMixin(MagicMixin):
     def __init__(self, /, *args, **kw):
         self._mock_set_async_magics()  # make magic work for kwargs in init
         _safe_super(AsyncMagicMixin, self).__init__(*args, **kw)
@@ -2056,7 +2056,7 @@ class AsyncMagicMixin:
             setattr(_type, entry, MagicProxy(entry, self))
 
 
-class MagicMock(MagicMixin, AsyncMagicMixin, Mock):
+class MagicMock(AsyncMagicMixin, Mock):
     """
     MagicMock is a subclass of Mock with default implementations
     of most of the magic methods. You can use MagicMock without having to
@@ -2078,8 +2078,9 @@ class MagicMock(MagicMixin, AsyncMagicMixin, Mock):
 
 
 
-class MagicProxy(object):
+class MagicProxy(Base):
     def __init__(self, name, parent):
+        _safe_super(MagicProxy, self).__init__(name, parent)
         self.name = name
         self.parent = parent
 

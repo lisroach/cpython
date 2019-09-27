@@ -248,7 +248,7 @@ def _setup_async_mock(mock):
     mock.await_args_list = _CallList()
     mock._await_event = _AwaitEvent(mock)
 
-    # Mock is not configured yet so the attributes are set
+    # Mock is not configured yet so the attributes are  set
     # to a function and then the corresponding mock helper function
     # is called when the helper is accessed similar to _setup_func.
     def wrapper(attr, /, *args, **kwargs):
@@ -2133,7 +2133,6 @@ class MagicProxy(object):
 
 
 class AsyncMockMixin(Base):
-    #_await_event = _delegating_property('_await_event')
     await_count = _delegating_property('await_count')
     await_args = _delegating_property('await_args')
     await_args_list = _delegating_property('await_args_list')

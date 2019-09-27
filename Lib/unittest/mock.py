@@ -246,7 +246,7 @@ def _setup_async_mock(mock):
     mock.await_count = 0
     mock.await_args = None
     mock.await_args_list = _CallList()
-    mock.awaited = _AwaitEvent(mock)
+    mock._await_event = _AwaitEvent(mock)
 
     # Mock is not configured yet so the attributes are set
     # to a function and then the corresponding mock helper function
@@ -2133,7 +2133,7 @@ class MagicProxy(object):
 
 
 class AsyncMockMixin(Base):
-    awaited = _delegating_property('awaited')
+    #_await_event = _delegating_property('_await_event')
     await_count = _delegating_property('await_count')
     await_args = _delegating_property('await_args')
     await_args_list = _delegating_property('await_args_list')
@@ -2147,7 +2147,7 @@ class AsyncMockMixin(Base):
         # It is set through __dict__ because when spec_set is True, this
         # attribute is likely undefined.
         self.__dict__['_is_coroutine'] = asyncio.coroutines._is_coroutine
-        self.__dict__['_mock_awaited'] = _AwaitEvent(self)
+        self.__dict__['_await_event'] = _AwaitEvent(self)
         self.__dict__['_mock_await_count'] = 0
         self.__dict__['_mock_await_args'] = None
         self.__dict__['_mock_await_args_list'] = _CallList()
@@ -2176,7 +2176,7 @@ class AsyncMockMixin(Base):
                 self.await_count += 1
                 self.await_args = _call
                 self.await_args_list.append(_call)
-                await self.awaited._notify()
+                await self._await_event._notify()
 
         return await proxy()
 

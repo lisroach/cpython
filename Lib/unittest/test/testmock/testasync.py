@@ -178,7 +178,7 @@ class AsyncAutospecTest(unittest.TestCase):
         self.assertEqual(spec.await_count, 0)
         self.assertIsNone(spec.await_args)
         self.assertEqual(spec.await_args_list, [])
-        self.assertIsInstance(spec.awaited, _AwaitEvent)
+        self.assertIsInstance(spec._await_event, _AwaitEvent)
         spec.assert_not_awaited()
 
         asyncio.run(main())
@@ -212,7 +212,7 @@ class AsyncAutospecTest(unittest.TestCase):
                 self.assertEqual(mock_method.await_count, 0)
                 self.assertEqual(mock_method.await_args_list, [])
                 self.assertIsNone(mock_method.await_args)
-                self.assertIsInstance(mock_method.awaited, _AwaitEvent)
+                self.assertIsInstance(mock_method._await_event, _AwaitEvent)
                 mock_method.assert_not_awaited()
 
                 await awaitable
